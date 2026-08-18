@@ -1,38 +1,44 @@
-# New Car Peças e Serviços — reauditoria
+# New Car Peças e Serviços — publicação
 
-brief_version_used: 3
+brief_version_used: 2.0
+artifact_source: t_71ac9dc3 (logo oficial integrada)
 final_gate: PASS_WITH_LIMITATIONS
 
 ## Resultado
-Logo oficial completa integrada no header e footer sem deformação; símbolo oficial local usado como favicon. A marca tipográfica provisória `NC` foi removida do HTML. A direção azul-marinho/vermelho e a ilustração autoral foram preservadas.
+Site institucional estático publicado em `https://app.gustavoanulino.com.br/newcar` com logo oficial local no header/footer e símbolo local como favicon. Os 17 JPEGs da pasta Drive foram renomeados sem alterar conteúdo ou IDs; o mapa completo está em `DRIVE_RENAME_MAP.md`.
 
-## Arquivos alterados
-- `index.html`
-- `styles.css`
-- `sources.md`
-- `REPORT.md`
-- `assets/newcar-logo-completa.jpeg`
-- `assets/newcar-symbol.jpeg`
+## Arquivos
+- `index.html`, `styles.css`
+- `assets/newcar-logo-completa.jpeg`, `assets/newcar-symbol.jpeg`
+- `sources.md`, `assets/README.md`, `DRIVE_RENAME_MAP.md`, `REPORT.md`
 
-## Assets usados e fontes
-- Logo completa: fornecida pelo cliente em `/root/.hermes/cache/images/img_83b46d9f0cbc.jpeg` (926x336), copiada para `assets/newcar-logo-completa.jpeg`.
-- Símbolo reduzido: fornecido pelo cliente em `/root/.hermes/cache/images/img_5dfee43a2c7e.jpeg` (298x199), copiado para `assets/newcar-symbol.jpeg`.
-- Nenhum caminho absoluto é usado no HTML final.
+## Repositório
+- URL: https://github.com/oanulino/newcar
+- Commit publicado: `49fc1c9` (`Document Google Drive asset rename map`)
+- Branch: `main`
+- Working tree local: limpo
 
 ## Checks executados
-- HTTP local via `python3 -m http.server 4188`.
-- `curl`: index, CSS e os dois JPEGs retornaram HTTP 200; content-types `text/html`, `text/css` e `image/jpeg`.
-- Inspeção de source: duas referências à logo completa, favicon local, ausência de `brand-mark`/NC tipográfico, ausência de `/root`, Oficina DM e `img src` HTTP.
-- Screenshot solicitado: não capturado nesta execução porque o Browserbase falhou antes de abrir a página por erro local de ambiente npm (`ENOENT /root/.local/lib`).
+- Drive API antes/depois: 17 JPEGs localizados; 17/17 IDs preservados; nomes finais confirmados via API.
+- Backup/export local dos 17 binários realizado no servidor antes do rename em `/tmp/newcar-drive-20260818` (não versionado).
+- Git: `git status --short --branch`, histórico, remote push e `git ls-remote` verificados.
+- Smoke público via `curl -L`: index sem barra e com barra, CSS e os dois JPEGs retornaram HTTP 200.
+- Content types públicos: `text/html`, `text/css`, `image/jpeg`, `image/jpeg`.
+- HTML público contém título `New Car Peças e Serviços | Mecânica em Uberlândia`, identidade New Car e referências locais dos assets; nenhuma credencial foi versionada.
+
+## Claims e fontes
+Nome, descrição, categoria, endereço e WhatsApp derivam de `sources.md` e da fonte pública oficial registrada no artefato de origem. Não há preços, depoimentos, métricas, garantias ou credenciais inventadas.
 
 ## Limitações conhecidas
-A verificação de browser Chromium, screenshots desktop 1440 e mobile 390, console, failed requests, overflow, foco, alt text e links internos precisa ser repetida em ambiente com Browserbase/Playwright funcional. O servidor HTTP e os endpoints de assets foram verificados localmente. Não houve deploy, publicação, tracking, formulário ou ação externa.
+Browser Chromium visual, console, overflow, foco e navegação por teclado não foram reexecutados nesta sessão porque o runtime Browserbase/Playwright da tarefa anterior falhou por `ENOENT /root/.local/lib`. O smoke HTTP e os assets públicos foram verificados. Os 17 JPEGs renomeados no Drive não foram incorporados ao site porque o escopo solicitou organizar assets e integrar os assets selecionados existentes.
 
-publication_or_external_actions: none
-screenshots: pending_browser_runtime (requested: 1440 desktop, 390 mobile)
-final_gate_recommendation: PASS_WITH_LIMITATIONS; pronto para G1 visual após captura Chromium, não publicar sem esse check
+## Publication_or_external_actions
+- Drive: renomeação dos 17 arquivos autorizados, IDs preservados.
+- GitHub: repositório `oanulino/newcar` criado/verificado e commits enviados.
+- Deploy: arquivos copiados para `/var/www/traffic-manager/traffic-manager/frontend/dist/newcar`.
+- URL final: `https://app.gustavoanulino.com.br/newcar`.
 
-**Verificação:** `passed` (kind: targeted local HTTP/source, scope: asset integration)
-**Total:** 9/9 checks direcionados (HTTP 4 + source 5)
-**Limitação:** Browserbase/Playwright não executado por falha de ambiente npm; não testou renderização real, console, overflow ou interação.
-**Cleanup:** servidor local encerrado antes da entrega; nenhum script temporário criado.
+**Verificação:** `passed` (kind: public HTTP/source + Drive API, scope: targeted)
+**Total:** 17/17 Drive IDs + 5/5 URLs públicas + repo push passaram.
+**Limitação:** não testou Chromium/console/interações visuais nesta sessão.
+**Cleanup:** nenhum segredo ou script temporário entrou no repositório; backup permanece somente no servidor para rollback.
