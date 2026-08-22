@@ -23,3 +23,28 @@
     btn.replaceWith(f);
   });
 })();
+
+/* Auto play/pause video on scroll (com som; fallback mutado se o navegador bloquear) */
+(function(){
+  var v=document.querySelector('.auto-video');
+  if(!v || window.matchMedia('(prefers-reduced-motion: reduce)').matches){ if(v) v.controls=true; return; }
+  var playing=false;
+  function start(){
+    v.removeAttribute('muted');
+    var p=v.play();
+    if(p!==undefined){ p.catch(function(){ v.setAttribute('muted',''); v.play(); }); }
+  }
+  function stop(){ v.pause(); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          if(!playing){ playing=true; start(); }
+        } else if(playing){
+          playing=false; stop();
+        }
+      });
+    },{threshold:0.35,rootMargin:'0px 0px -12% 0px'});
+    io.observe(v);
+  } else { v.controls=true; }
+})();
