@@ -8,4 +8,8 @@
 .contact-map{min-height:260px;border-radius:2px;overflow:hidden;background:#e9e7e1}
 .contact-map iframe{display:block;width:100%;height:260px;border:0}
 footer img{object-fit:contain}
+/* Sections without numbered labels */
+.intro-copy,.services-content,.process-content,.questions-content{max-width:1100px}
+.services,.process,.questions{gap:0}
+@media(max-width:760px){.intro-copy,.services-content,.process-content,.questions-content{max-width:none}}
 @media(max-width:760px){.hero-media img{object-fit:cover;object-position:62% 30%}.hero-shade{background:linear-gradient(180deg,#0a1c3385 0%,#0a1c3340 45%,#0a1c33dd 100%)}.hero-copy{text-shadow:0 2px 28px rgba(10,28,51,.7)}.contact{grid-template-columns:1fr;padding-top:2rem;padding-bottom:4rem}.contact-info{margin-top:2.5rem;display:block}.contact-info a{font-size:12px}.contact-map{margin-top:2rem}.contact-map iframe{height:250px}}
