@@ -38,7 +38,12 @@ details[open] summary:after{transform:rotate(180deg)}
 .ticker span{font:11px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.12em}
 .ticker b{color:var(--cream);font-size:1rem}
 .ribbon-track:hover{animation-play-state:paused}
-@media (prefers-reduced-motion: reduce){.ticker .ribbon-track{animation:none}}
+/* WhatsApp floating button */
+.wa-float{position:fixed;right:1.2rem;bottom:1.2rem;z-index:90;display:flex;align-items:center;gap:.6rem;background:#25d366;color:#fff;padding:.85rem 1.1rem;border-radius:999px;font:600 12px 'Space Grotesk',Arial,sans-serif;letter-spacing:.02em;text-transform:uppercase;box-shadow:0 8px 26px rgba(0,0,0,.28);transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.wa-float:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.34)}
+.wa-float svg{display:block;flex:none}
+@media(max-width:760px){.wa-float{bottom:1rem;right:1rem;padding:.75rem .9rem}.wa-float span{display:none}.wa-float{border-radius:50%;width:58px;height:58px;justify-content:center}}
+@media (prefers-reduced-motion: reduce){.wa-float{transition:none}.ticker .ribbon-track{animation:none}}
 
 /* Staggered steps */
 .reveal:nth-child(2){transition-delay:.1s}
