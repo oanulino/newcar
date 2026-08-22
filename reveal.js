@@ -10,4 +10,16 @@
     });
   }, {threshold: 0.12, rootMargin: '0px 0px -40px 0px'});
   targets.forEach(function(el){ io.observe(el); });
+})();/* Map click-to-load */
+(function(){
+  var btn=document.querySelector('.map-load');
+  if(!btn) return;
+  btn.addEventListener('click',function(){
+    var f=document.createElement('iframe');
+    f.src=btn.getAttribute('data-map-src');
+    f.title='Localização da New Car no Google Maps';
+    f.loading='lazy';
+    f.referrerPolicy='no-referrer-when-downgrade';
+    btn.replaceWith(f);
+  });
 })();
