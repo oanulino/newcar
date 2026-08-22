@@ -2,7 +2,7 @@
 
 /* V4 detail corrections */
 .brand img{object-fit:contain}
-.hero-media img{object-fit:contain;object-position:right center;background:var(--navy)}
+.hero-media img{object-fit:cover;object-position:55% 42%;background:var(--navy)}
 .contact-info{display:grid;grid-template-columns:.8fr 1.2fr;gap:2rem;align-items:start}
 .contact-details{border-top:1px solid #ffffff80;padding-top:1.2rem}
 .contact-map{min-height:260px;border-radius:2px;overflow:hidden;background:#e9e7e1}
