@@ -48,3 +48,101 @@
     io.observe(v);
   } else { v.controls=true; }
 })();
+
+/* Analytics dataLayer events — no personal data */
+(function(){
+  var dl=window.dataLayer=window.dataLayer||[];
+  var pushed={};
+  function push(event,params){
+    var item=params||{};
+    item.event=event;
+    dl.push(item);
+  }
+  function text(el){ return (el && (el.textContent||'')).replace(/\s+/g,' ').trim(); }
+  function ctaLocation(link){
+    if(link.classList.contains('header-link')) return 'header';
+    if(link.classList.contains('wa-float')) return 'floating';
+    if(link.closest('.hero')) return 'hero';
+    if(link.closest('.contact')) return 'contact';
+    if(link.closest('footer')) return 'footer';
+    return 'other';
+  }
+  function slug(value){
+    return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  }
+
+  document.addEventListener('click',function(e){
+    var link=e.target.closest && e.target.closest('a');
+    if(link){
+      var href=link.getAttribute('href')||'';
+      if(/(^|:)\/\/wa\.me\//i.test(href)){
+        push('whatsapp_click',{
+          cta_location:ctaLocation(link),
+          button_text:text(link).slice(0,80),
+          destination_domain:'wa.me'
+        });
+      }
+      if(link.hasAttribute('data-service')){
+        push('service_interest',{
+          service_name:link.getAttribute('data-service'),
+          service_position:link.querySelector('span') ? text(link.querySelector('span')) : undefined
+        });
+      }
+      if(/^https:\/\//i.test(href) && !/(^|:)\/\/wa\.me\//i.test(href) && !/google\.com\/maps/i.test(href)){
+        try{
+          var url=new URL(href,location.href);
+          if(url.origin!==location.origin){
+            push('outbound_click',{destination_domain:url.hostname,link_text:text(link).slice(0,80)});
+          }
+        }catch(_){ }
+      }
+    }
+    var map=e.target.closest && e.target.closest('.map-load');
+    if(map && !pushed.map_click){
+      pushed.map_click=true;
+      push('map_click',{map_id:'mapa_newcar',location_area:'uberlandia'});
+    }
+  });
+
+  document.querySelectorAll('.faq details').forEach(function(detail,index){
+    detail.addEventListener('toggle',function(){
+      if(detail.open) push('faq_open',{faq_index:index+1,question:slug(text(detail.querySelector('summary')))});
+    });
+  });
+
+  var video=document.querySelector('.auto-video');
+  if(video){
+    var progress={25:false,50:false,75:false};
+    video.addEventListener('play',function(){
+      if(!pushed.video_start){ pushed.video_start=true; push('video_start',{video_id:'newcar_office'}); }
+    });
+    video.addEventListener('timeupdate',function(){
+      if(!video.duration || !isFinite(video.duration)) return;
+      var pct=Math.floor(video.currentTime/video.duration*100);
+      [25,50,75].forEach(function(mark){
+        if(pct>=mark && !progress[mark]){ progress[mark]=true; push('video_progress',{video_id:'newcar_office',video_percent:mark}); }
+      });
+    });
+  }
+
+  var scrollMarks={50:false,90:false};
+  function checkScroll(){
+    var doc=document.documentElement;
+    var max=doc.scrollHeight-window.innerHeight;
+    if(max<=0) return;
+    var pct=Math.round(window.scrollY/max*100);
+    [50,90].forEach(function(mark){
+      if(pct>=mark && !scrollMarks[mark]){ scrollMarks[mark]=true; push('scroll_depth',{percent_scrolled:mark}); }
+    });
+  }
+  window.addEventListener('scroll',checkScroll,{passive:true});
+
+  try{
+    var params=new URLSearchParams(location.search), campaign={};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid'].forEach(function(key){
+      var value=params.get(key);
+      if(value) campaign[key]=value.slice(0,200);
+    });
+    if(Object.keys(campaign).length) push('campaign_attribution',campaign);
+  }catch(_){ }
+})();
