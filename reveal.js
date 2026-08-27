@@ -58,7 +58,6 @@
     item.event=event;
     dl.push(item);
   }
-  function text(el){ return (el && (el.textContent||'')).replace(/\s+/g,' ').trim(); }
   function ctaLocation(link){
     if(link.classList.contains('header-link')) return 'header';
     if(link.classList.contains('wa-float')) return 'floating';
@@ -67,8 +66,8 @@
     if(link.closest('footer')) return 'footer';
     return 'other';
   }
-  function slug(value){
-    return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  function safeParam(value,max){
+    return String(value||'').replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,max||200);
   }
 
   document.addEventListener('click',function(e){
@@ -78,7 +77,6 @@
       if(/(^|:)\/\/wa\.me\//i.test(href)){
         push('whatsapp_click',{
           cta_location:ctaLocation(link),
-          button_text:text(link).slice(0,80),
           destination_domain:'wa.me'
         });
       }
@@ -92,7 +90,7 @@
         try{
           var url=new URL(href,location.href);
           if(url.origin!==location.origin){
-            push('outbound_click',{destination_domain:url.hostname,link_text:text(link).slice(0,80)});
+            push('outbound_click',{destination_domain:safeParam(url.hostname,253)});
           }
         }catch(_){ }
       }
@@ -106,19 +104,24 @@
 
   document.querySelectorAll('.faq details').forEach(function(detail,index){
     detail.addEventListener('toggle',function(){
-      if(detail.open) push('faq_open',{faq_index:index+1,question:slug(text(detail.querySelector('summary')))});
+      if(detail.open) push('faq_open',{faq_id:detail.getAttribute('data-faq')||String(index+1)});
     });
   });
 
   var video=document.querySelector('.auto-video');
   if(video){
     var progress={25:false,50:false,75:false};
+    var lastTime=0;
     video.addEventListener('play',function(){
       if(!pushed.video_start){ pushed.video_start=true; push('video_start',{video_id:'newcar_office'}); }
     });
     video.addEventListener('timeupdate',function(){
-      if(!video.duration || !isFinite(video.duration)) return;
-      var pct=Math.floor(video.currentTime/video.duration*100);
+      if(!video.duration || !isFinite(video.duration) || video.paused) return;
+      var current=video.currentTime;
+      var jumped=current-lastTime>1.5;
+      lastTime=current;
+      if(jumped) return;
+      var pct=Math.floor(current/video.duration*100);
       [25,50,75].forEach(function(mark){
         if(pct>=mark && !progress[mark]){ progress[mark]=true; push('video_progress',{video_id:'newcar_office',video_percent:mark}); }
       });
@@ -126,22 +129,26 @@
   }
 
   var scrollMarks={50:false,90:false};
+  var maxScrollPercent=0;
   function checkScroll(){
     var doc=document.documentElement;
     var max=doc.scrollHeight-window.innerHeight;
     if(max<=0) return;
     var pct=Math.round(window.scrollY/max*100);
+    maxScrollPercent=Math.max(maxScrollPercent,pct);
     [50,90].forEach(function(mark){
-      if(pct>=mark && !scrollMarks[mark]){ scrollMarks[mark]=true; push('scroll_depth',{percent_scrolled:mark}); }
+      if(maxScrollPercent>=mark && !scrollMarks[mark]){ scrollMarks[mark]=true; push('scroll_depth',{percent_scrolled:mark}); }
     });
   }
   window.addEventListener('scroll',checkScroll,{passive:true});
+  window.addEventListener('resize',checkScroll);
+  window.addEventListener('load',checkScroll);
 
   try{
     var params=new URLSearchParams(location.search), campaign={};
     ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid'].forEach(function(key){
       var value=params.get(key);
-      if(value) campaign[key]=value.slice(0,200);
+      if(value) campaign[key]=safeParam(value,200);
     });
     if(Object.keys(campaign).length) push('campaign_attribution',campaign);
   }catch(_){ }
