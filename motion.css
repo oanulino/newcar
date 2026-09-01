@@ -33,10 +33,10 @@ details[open] summary:after{transform:rotate(180deg)}
 .photo-break img{animation:photo-kenburns 18s var(--ease) infinite alternate;will-change:transform}
 
 /* Ticker strip */
-.ticker{background:var(--red);color:var(--navy);overflow:hidden;padding:.9rem 0;white-space:nowrap}
+.ticker{background:var(--red);color:#fff;overflow:hidden;padding:.9rem 0;white-space:nowrap}
 .ticker .ribbon-track{display:flex;align-items:center;gap:1.6rem;width:max-content;padding-left:1.6rem;animation:ticker 26s linear infinite}
 .ticker span{font:11px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.12em}
-.ticker b{color:var(--cream);font-size:1rem}
+.ticker b{color:#fff;font-size:1rem}
 .ribbon-track:hover{animation-play-state:paused}
 /* WhatsApp floating button */
 @keyframes wa-pulse{0%{transform:scale(1)}45%{transform:scale(1.1)}100%{transform:scale(1)}}
@@ -50,7 +50,7 @@ details[open] summary:after{transform:rotate(180deg)}
 @media (prefers-reduced-motion: reduce){.wa-float{animation:none;transition:none}.wa-float::after{animation:none}.ticker .ribbon-track{animation:none}}
 
 /* Map click-to-load */
-.map-load{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;width:100%;min-height:260px;border:0;cursor:pointer;background:linear-gradient(180deg,#0e2a4a,#123458);color:#f5f7fa;font:600 13px 'Space Grotesk',Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:background .45s var(--ease)}
+.map-load{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;width:100%;height:100%;min-height:0;border:0;cursor:pointer;background:linear-gradient(180deg,#0e2a4a,#123458);color:#f5f7fa;font:600 13px 'Space Grotesk',Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:background .45s var(--ease)}
 .map-load:hover{background:linear-gradient(180deg,#13355c,#163f6e)}
 .map-load svg{margin-bottom:.2rem;opacity:.95}
 .map-load small{font:10px 'DM Mono',monospace;text-transform:none;letter-spacing:.05em;color:#b9c8da}

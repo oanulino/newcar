@@ -22,7 +22,10 @@
     f.title='Localização da New Car no Google Maps';
     f.loading='lazy';
     f.referrerPolicy='no-referrer-when-downgrade';
+    f.tabIndex=0;
+    btn.setAttribute('aria-expanded','true');
     btn.replaceWith(f);
+    f.focus();
   });
 })();
 
@@ -131,7 +134,7 @@
       if(link.hasAttribute('data-service')){
         push('service_interest',{
           service_name:link.getAttribute('data-service'),
-          service_position:link.querySelector('span') ? text(link.querySelector('span')) : undefined
+          service_position:link.querySelector('span') ? link.querySelector('span').textContent.trim() : undefined
         });
       }
       if(/^https:\/\//i.test(href) && !/(^|:)\/\/wa\.me\//i.test(href) && !/google\.com\/maps/i.test(href)){
