@@ -35,39 +35,52 @@
   if(!v) return;
   var loaded=false;
   var loading=null;
+  var source=null;
 
   function loadVideo(){
-    if(loaded) return Promise.resolve();
+    if(loaded) return Promise.resolve(true);
     if(loading) return loading;
     var src=v.getAttribute('data-src');
-    if(!src) return Promise.resolve();
-    var source=document.createElement('source');
-    source.src=src;
-    source.type='video/mp4';
-    v.appendChild(source);
+    if(!src) return Promise.resolve(false);
+    if(!source){
+      source=document.createElement('source');
+      source.src=src;
+      source.type='video/mp4';
+      source.setAttribute('data-lazy-video','true');
+      v.appendChild(source);
+    }
     v.preload='metadata';
     v.load();
     loading=new Promise(function(resolve){
-      function finish(){ loaded=true; resolve(); }
-      if(v.readyState>=2) finish();
+      var settled=false;
+      function finish(ok){
+        if(settled) return;
+        settled=true;
+        loading=null;
+        loaded=ok;
+        resolve(ok);
+      }
+      if(v.readyState>=1) finish(true);
       else {
-        v.addEventListener('loadeddata',finish,{once:true});
-        v.addEventListener('error',finish,{once:true});
+        v.addEventListener('loadedmetadata',function(){finish(true);},{once:true});
+        v.addEventListener('error',function(){finish(false);},{once:true});
       }
     });
     return loading;
   }
 
   function start(){
-    loadVideo().then(function(){
-      v.removeAttribute('muted');
-      var p=v.play();
-      if(p!==undefined){
-        p.catch(function(){
-          v.setAttribute('muted','');
-          v.play().catch(function(){});
-        });
+    loadVideo().then(function(ok){
+      if(!ok){
+        v.controls=true;
+        return;
       }
+      /* Keep autoplay muted; the native controls let the visitor opt into sound. */
+      v.muted=true;
+      v.defaultMuted=true;
+      v.setAttribute('muted','');
+      var p=v.play();
+      if(p!==undefined){ p.catch(function(){ v.controls=true; }); }
     });
   }
 
